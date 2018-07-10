@@ -10,8 +10,7 @@ unit indef where
 
    signature Abstract where
      import GHC.TypeLits
-     data NatType :: Nat  -- comment this out
-     -- type NatType = 32 -- and uncomment this to make it compile
+     data NatType :: Nat
 
    module Util where
      import Abstract
@@ -34,6 +33,5 @@ unit main where
      import MyUtil
 
      main :: IO ()
-     main = do putStr "Nat type is: "
-               print $ natTypeToInteger Proxy
-               putStrLn ""
+     main = do print $ natTypeToInteger Proxy
+               
