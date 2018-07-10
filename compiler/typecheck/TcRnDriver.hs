@@ -1008,6 +1008,14 @@ checkBootTyCon is_boot tc1 tc2
     checkRoles roles1 roles2 `andThenCheck`
     check (eqTypeX env syn_rhs1 syn_rhs2) empty   -- nothing interesting to say
 
+  -- This allows abstract 'data T' to be implemented using 'type T = Literal'
+  -- Since the kinds already match (we have checked this upfront) all we need to
+  -- check is that the implementation 'type T = ...' defined an actual literal.
+  -- See #15138 for the case this handles.
+  | isAbstractTyCon tc1
+  , Just (_, ty) <- synTyConDefn_maybe tc2
+  , isJust (isNumLitTy ty) || isJust (isStrLitTy ty)
+  = Nothing
   -- This allows abstract 'data T a' to be implemented using 'type T = ...'
   -- and abstract 'class K a' to be implement using 'type K = ...'
   -- See Note [Synonyms implement abstract data]
