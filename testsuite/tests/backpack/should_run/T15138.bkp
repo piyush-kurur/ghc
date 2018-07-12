@@ -34,4 +34,3 @@ unit main where
 
      main :: IO ()
      main = do print $ natTypeToInteger Proxy
-               
