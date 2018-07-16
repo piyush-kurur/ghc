@@ -1012,7 +1012,8 @@ checkBootTyCon is_boot tc1 tc2
   -- Since the kinds already match (we have checked this upfront) all we need to
   -- check is that the implementation 'type T = ...' defined an actual literal.
   -- See #15138 for the case this handles.
-  | isAbstractTyCon tc1
+  | not is_boot
+  , isAbstractTyCon tc1
   , Just (_, ty) <- synTyConDefn_maybe tc2
   , isJust (isNumLitTy ty) || isJust (isStrLitTy ty)
   = Nothing
