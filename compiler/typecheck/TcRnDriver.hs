@@ -1014,8 +1014,7 @@ checkBootTyCon is_boot tc1 tc2
   -- See #15138 for the case this handles.
   | not is_boot
   , isAbstractTyCon tc1
-  , Just (_, ty) <- synTyConDefn_maybe tc2
-  , isJust (isNumLitTy ty) || isJust (isStrLitTy ty)
+  , Just _ <- isLitTy . snd  <$> synTyConDefn_maybe tc2
   = Nothing
   -- This allows abstract 'data T a' to be implemented using 'type T = ...'
   -- and abstract 'class K a' to be implement using 'type K = ...'
