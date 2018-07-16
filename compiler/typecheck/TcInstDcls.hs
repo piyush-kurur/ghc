@@ -538,9 +538,16 @@ doClsInstErrorChecks inst_info
          -- Handwritten instances of any rejected
          -- class is always forbidden
          -- #12837
-      ; failIfTc (clas_nm `elem` rejectedClassNames) clas_err
+      ; is_sig  <- tcIsHsig
+      ; failIfTc (not is_sig && clas_nm `elem` rejectedClassNames) clas_err
+         -- Check for hand-written Generic instances. This is
+         -- disallowed in Safe Haskell unless we encounter these
+         -- instances in a signature files. An instance of the kind
+         -- `instance KnownNat T` inside a signature file is not
+         -- really instances but a requirement on `T` (See issue
+         -- #15379). For more on evidence for such classes see the
+         -- Note [Fabricating Evidence for Literals in Backpack].
 
-         -- Check for hand-written Generic instances (disallowed in Safe Haskell)
       ; when (clas_nm `elem` genericClassNames) $
         do { failIfTc (safeLanguageOn dflags) gen_inst_err
            ; when (safeInferOn dflags) (recordUnsafeInfer emptyBag) }
