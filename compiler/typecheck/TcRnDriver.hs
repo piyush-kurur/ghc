@@ -1028,7 +1028,8 @@ checkBootTyCon is_boot tc1 tc2
   -- #15138 for the case this handles.
   | not is_boot
   , isAbstractTyCon tc1
-  , Just _ <- isLitTy . snd  <$> synTyConDefn_maybe tc2
+  , Just (_,ty2) <-synTyConDefn_maybe tc2
+  , isJust (isLitTy ty2)
   = Nothing
 
   | Just fam_flav1 <- famTyConFlav_maybe tc1
