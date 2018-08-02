@@ -1021,11 +1021,11 @@ checkBootTyCon is_boot tc1 tc2
     -- So for now, let it all through (it won't cause segfaults, anyway).
     -- Tracked at #12704.
 
-  -- This allows abstract 'data T :: Nat' or 'data to be implemented
-  -- using 'type T = Literal' Since the kinds already match (we have
-  -- checked this upfront) all we need to check is that the
-  -- implementation 'type T = ...' defined an actual literal.  See
-  -- #15138 for the case this handles.
+  -- This allows abstract 'data T :: Nat' to be implemented using
+  -- 'type T = 42' Since the kinds already match (we have checked this
+  -- upfront) all we need to check is that the implementation 'type T
+  -- = ...' defined an actual literal.  See #15138 for the case this
+  -- handles.
   | not is_boot
   , isAbstractTyCon tc1
   , Just (_,ty2) <-synTyConDefn_maybe tc2
