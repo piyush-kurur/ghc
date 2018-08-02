@@ -1007,15 +1007,6 @@ checkBootTyCon is_boot tc1 tc2
   = ASSERT(tc1 == tc2)
     checkRoles roles1 roles2 `andThenCheck`
     check (eqTypeX env syn_rhs1 syn_rhs2) empty   -- nothing interesting to say
-
-  -- This allows abstract 'data T' to be implemented using 'type T = Literal'
-  -- Since the kinds already match (we have checked this upfront) all we need to
-  -- check is that the implementation 'type T = ...' defined an actual literal.
-  -- See #15138 for the case this handles.
-  | not is_boot
-  , isAbstractTyCon tc1
-  , Just _ <- isLitTy . snd  <$> synTyConDefn_maybe tc2
-  = Nothing
   -- This allows abstract 'data T a' to be implemented using 'type T = ...'
   -- and abstract 'class K a' to be implement using 'type K = ...'
   -- See Note [Synonyms implement abstract data]
@@ -1029,6 +1020,15 @@ checkBootTyCon is_boot tc1 tc2
     -- there is not an obvious way to do this for a constraint synonym.
     -- So for now, let it all through (it won't cause segfaults, anyway).
     -- Tracked at #12704.
+
+  -- This allows abstract 'data T :: Nat' or 'data to be implemented using 'type T = Literal'
+  -- Since the kinds already match (we have checked this upfront) all we need to
+  -- check is that the implementation 'type T = ...' defined an actual literal.
+  -- See #15138 for the case this handles.
+  | not is_boot
+  , isAbstractTyCon tc1
+  , Just _ <- isLitTy . snd  <$> synTyConDefn_maybe tc2
+  = Nothing
 
   | Just fam_flav1 <- famTyConFlav_maybe tc1
   , Just fam_flav2 <- famTyConFlav_maybe tc2
